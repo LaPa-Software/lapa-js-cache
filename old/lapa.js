@@ -1,6 +1,6 @@
 if(!window.LaPa) {
     window.LaPa = {
-        'version': {'major': 2, 'minor': 9, 'build': 568},
+        'version': {'major': 2, 'minor': 9, 'build': 606},
         'loadBegin': new Date().getTime(),
         'debug': true,
         'extensions': {},
@@ -524,30 +524,32 @@ if(!window.LaPa) {
                 return page; // TODO: Remove Head content
             }
         },
-        'readyPage': function () {
-            if(LaPa.waitList.length!=0){
+        'readyPage': function (url) {
+            /*if(LaPa.waitList.length!=0){
                 for (i in LaPa.waitList){
                     LaPa.log(i+' load unFinished!','SCRIPT');
                     delete LaPa.STACK[i];
                 }
-            }
-            if(LaPa.preparingPage) {
-                LaPa.preparingPage = false;
+            }*/
+            //if(LaPa.preparingPage) {
+            //    LaPa.preparingPage = false;
                 LaPa.indicatorState('ready');
                 LaPa.log('initPage loaded', 'PAGE');
-                try {
+                /*try {
+                    LaPa.allowRunEvents=true;
                     window.dispatchEvent(LaPa.renderEvent);
                 }catch(e){
 
-                }
-            }
+                }*/
+            //}
         },
         'fetchPage': function () {
             LaPa.indicatorState('loading');
             LaPa.currentPage = location.pathname;
             history.replaceState({'id': LaPa.currentPage}, document.title, LaPa.currentPage);
             LaPa.initComplete = true;
-            LaPa.preparingPage = true;
+            LaPa.skipPrepairing=false;
+            LaPa.preparingPage = LaPa.currentPage;
             LaPa.waitList = [];
             if(LaPa.PAGE[LaPa.currentPage]) {
                 LaPa.log(LaPa.currentPage + ' is initPage, already cached', 'PAGE');
@@ -561,7 +563,8 @@ if(!window.LaPa) {
                         document.getElementsByTagName('script')[i].id = id;
                     }
                 }
-                setTimeout(LaPa.readyPage,500);
+                //setTimeout(LaPa.readyPage,500);
+                //LaPa.readyPage();
             }else{
                 LaPa.log(LaPa.currentPage + ' is initPage, caching...', 'PAGE');
                 //LaPa.PAGE[LaPa.currentPage] = LaPa.parseHTML.init(null, true);
@@ -573,18 +576,24 @@ if(!window.LaPa) {
                     if (LaPa.JS[id]) {
                         LaPa.waitList[id] = true;
                         document.getElementsByTagName('script')[i].id = id;
-                        document.getElementsByTagName('script')[i].onload = function () {
+                        /*document.getElementsByTagName('script')[i].onload = function () {
                             if(LaPa.fetchTimeOut)clearTimeout(LaPa.fetchTimeOut);
                             delete LaPa.waitList[id];
                             if (LaPa.waitList.length == 0){LaPa.readyPage();}else{
                                 LaPa.fetchTimeOut=setTimeout(LaPa.readyPage, 200);
                             }
-                        };
+                        };*/
                     }
                 }
-                LaPa.fetchTimeOut=setTimeout(LaPa.readyPage, 200); // TODO: Check already loaded scripts
+                //LaPa.fetchTimeOut=setTimeout(LaPa.readyPage, 200); // TODO: Check already loaded scripts
+                //LaPa.readyPage();
+                //LaPa.preparingPage=false;
+                LaPa.skipPrepairing=true;
+                LaPa.getPage(LaPa.currentPage);
             };
-            LaPa.getPage(LaPa.currentPage);
+            LaPa.indicatorState('ready');
+            LaPa.allowRunEvents=true;
+            window.dispatchEvent(LaPa.renderEvent);
         },
         'loadPage': function (source, meta) {
             if (!source) return;
@@ -593,7 +602,11 @@ if(!window.LaPa) {
             LaPa.PAGE[meta.url] = page;
             LaPa.saveDB('PAGE');
             if (LaPa.preparingPage == meta.url){
-                LaPa.render(meta.url);
+                if(LaPa.skipPrepairing){
+                    LaPa.preLoadPage(LaPa.PAGE[LaPa.preparingPage].links);
+                }else {
+                    LaPa.render(meta.url);
+                }
             }
         },
         'getPage': function (url) {
@@ -601,10 +614,15 @@ if(!window.LaPa) {
             LaPa.io(LaPa.loadPage, url, null, url, true);
         },
         'buildPage': function () {
-            LaPa.currentPage = LaPa.preparingPage;
+            if(!LaPa.preparingPage){
+                //LaPa.preLoadPage(LaPa.PAGE[LaPa.currentPage].links);
+                return;
+            }
+            //if(!LaPa.preparingPage)return;
+            LaPa.currentPage = LaPa.preparingPage||LaPa.currentPage;
             LaPa.preparingPage = false;
             page = LaPa.PAGE[LaPa.currentPage];
-            history.pushState({'id': LaPa.currentPage}, page['title'], LaPa.currentPage);
+            history.pushState({'id': LaPa.currentPage}, LaPa.PAGE[LaPa.currentPage]['title'], LaPa.currentPage);
             document.title = page.title;
             document.body.innerHTML = page.body;
             if(window.scrollTo) {
@@ -640,20 +658,22 @@ if(!window.LaPa) {
             }
         },
         'render': function (url) {
-            if(LaPa.CONF.runScriptsAsFuncContainer&&LaPa.CONF.legacyPages){
-                LaPa.script.clearWindow()
-            }else {
-                for (i in LaPa.PAGE[LaPa.currentPage].headScripts) {
-                    if (!LaPa.PAGE[url].headScripts[i]) {
-                        LaPa.log('Found unused '+i+', Destroying Page...','SCRIPT')
-                        LaPa.script.clearWindow();
-                        break;
+            if(LaPa.preparingPage==url) {
+                if (LaPa.CONF.runScriptsAsFuncContainer && LaPa.CONF.legacyPages) {
+                    LaPa.script.clearWindow()
+                } else {
+                    for (i in LaPa.PAGE[LaPa.currentPage].headScripts) {
+                        if (!LaPa.PAGE[url].headScripts[i]) {
+                            LaPa.log('Found unused ' + i + ', Destroying Page...', 'SCRIPT')
+                            LaPa.script.clearWindow();
+                            break;
+                        }
                     }
                 }
             }
-            LaPa.preLoadPage(LaPa.PAGE[url].links);
             LaPa.log('Rendering...', 'PAGE');
             LaPa.loadScripts(LaPa.PAGE[url].headScripts);
+            LaPa.preLoadPage(LaPa.PAGE[url].links);
         },
         'page': function (url) {
             if(LaPa.check()==false){
@@ -665,11 +685,13 @@ if(!window.LaPa) {
             LaPa.log(url + ' Preparing...', 'PAGE');
             LaPa.indicatorState('loading');
             try {
+                LaPa.allowRunEvents=false;
                 window.dispatchEvent(LaPa.loadEvent);
             }catch (e){
 
             }
             LaPa.preparingPage = url;
+            LaPa.skipPrepairing=false;
             if (LaPa.PAGE[url]) {
                 LaPa.render(url);
             } else {
@@ -681,6 +703,7 @@ if(!window.LaPa) {
             //window.onerror = LaPa.errorHandler;
             LaPa.loadExt();
             try {
+                LaPa.allowRunEvents=false;
                 window.dispatchEvent(LaPa.loadEvent);
             }catch (e){
 
