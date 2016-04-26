@@ -13,6 +13,14 @@ if(!window.native_addEventListener) {
                 //LaPa.script.eventHandlers[LaPa.script.eventHandlers.length] = listner;
                 //} else {
                 eventHandlers[eventHandlers.length] = listner;
+                if(window.LaPa&&event=='LaPaRender'){
+                    if(window.LaPa.allowRunEvents){
+                        try{
+                            handler();
+                        }catch(e){}
+                        console.log('Listener auto-tiggered, before event [' + event + '] attached');
+                    }
+                }
                 //}
             }
         }
