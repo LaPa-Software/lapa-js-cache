@@ -4,8 +4,8 @@
     var CONF = window.LaPaCONF||{};
     CONF = {
         'MODULE': {
-            'core': 'http://lapa.ndhost.ru/lapa/core.php',
-            'md5':'http://lapa.ndhost.ru/lapa/md5.min.js'
+            'core': '//lapa.ndhost.ru/lapa/core.php',
+            'md5':'//lapa.ndhost.ru/lapa/md5.min.js'
         },
         'localStorage': localStorage ? true : false,
         'initTime':new Date().getTime(),
