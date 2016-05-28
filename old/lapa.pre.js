@@ -61,10 +61,12 @@ if(!window.LaPa) {
     if (localStorage) {
         if (localStorage.getItem('LAPASOURCE')) {
             console.log('LaPa executing from LocalStorage...');
+            try{
             eval(localStorage.getItem('LAPASOURCE'));
+            }catch(e){console.log('Initialisation aborted! Clearing LocalStorage...');localStorage.clear();throw e}
         }
         xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://lapa.ndhost.ru/lapa/old/lapa.last.php', true);
+        xhr.open('GET', 'http://lapa.ndhost.ru/lapa/old/lapa.last.php?rand='+new Date().getTime(), true);
         xhr.send();
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
@@ -74,7 +76,9 @@ if(!window.LaPa) {
                 if (localStorage.getItem('LAPASOURCE'))if (localStorage.getItem('LAPASOURCE') == xhr.responseText)return;
                 localStorage.setItem('LAPASOURCE', xhr.responseText);
                 console.log('LaPa injected to LocalStorage...');
-                if (!window.LaPa)eval(xhr.responseText);
+                if (!window.LaPa){
+                    try{eval(xhr.responseText);
+                    }catch(e){console.log('Initialisation aborted! Clearing LocalStorage...');localStorage.clear();throw e}}
             }
         }
     } else {
