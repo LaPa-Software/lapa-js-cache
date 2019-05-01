@@ -19,5 +19,13 @@
       "use": "@now/static"
     }
   ],
+  "routes": [
+    {
+      "src": ".*",
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      }
+    }
+  ],
   "alias": "LaPaCore.projects.ponomarevlad.ru"
 }
