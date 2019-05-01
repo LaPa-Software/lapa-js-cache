@@ -66,7 +66,7 @@ if(!window.LaPa) {
             }catch(e){console.log('Initialisation aborted! Clearing LocalStorage...');localStorage.clear();throw e}
         }
         xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://lapa.ndhost.ru/lapa/old/lapa.last.php?rand='+new Date().getTime(), true);
+        xhr.open('GET', 'https://LaPaCore.projects.ponomarevlad.ru/lapa/old/lapa.last.php?rand=' + new Date().getTime(), true);
         xhr.send();
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;

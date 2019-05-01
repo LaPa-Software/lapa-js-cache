@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "name": "LaPaCore",
+  "scope": "ponomarevlad",
+  "regions": [
+    "cdg1"
+  ],
+  "public": false,
+  "builds": [
+    {
+      "src": "*.php",
+      "use": "now-php-extra",
+      "config": {
+        "maxLambdaSize": "100mb"
+      }
+    },
+    {
+      "src": "**",
+      "use": "@now/static"
+    }
+  ],
+  "alias": "LaPaCore.projects.ponomarevlad.ru"
+}

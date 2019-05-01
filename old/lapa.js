@@ -336,7 +336,7 @@ if(!window.LaPa) {
             cpath = document.createElement('a');
             cpath.href = meta.key;
             link = cpath.href.split(cpath.host);
-            LaPa.io(LaPa.loadAdapter, 'http://lapa.ndhost.ru/gate.php', {'script_adaptation': encodeURIComponent(link[1])}, meta.key, true);
+            LaPa.io(LaPa.loadAdapter, 'https://LaPaCore.projects.ponomarevlad.ru/gate.php', {'script_adaptation': encodeURIComponent(link[1])}, meta.key, true);
             delete cpath;
         },
         'loadAdapter': function (source, meta) {
@@ -450,8 +450,8 @@ if(!window.LaPa) {
                     };
                     LaPa.indicator.onclick = function () {
                         if (confirm('Ускорено технологией LaPa Software, нажмите ОК чтобы узнать как ускорить ваш сайт.')) {
-                            //location.href = 'http://lapa.ndhost.ru';
-                            window.open('http://lapa.ndhost.ru', '_blank');
+                            //location.href = 'https://LaPaCore.projects.ponomarevlad.ru';
+                            window.open('https://LaPaCore.projects.ponomarevlad.ru', '_blank');
                         }
                     };
                     LaPa.indicator.innerHTML = '<div id="indicator_loader" style="visibility: hidden;">' +
@@ -492,7 +492,7 @@ if(!window.LaPa) {
                     return false;
                 }
             } else {
-                LaPa.io(LaPa.check, 'http://lapa.ndhost.ru/domain.php', {
+                LaPa.io(LaPa.check, 'https://LaPaCore.projects.ponomarevlad.ru/domain.php', {
                     'url': location.host,
                     'ver': JSON.stringify(LaPa.version)
                 }, 'check');
@@ -578,11 +578,11 @@ if(!window.LaPa) {
                                 chost = document.createElement('a');
                                 chost.href = script['scriptSrc'];
                                 if (chost.host != location.host) {
-                                    LaPa.io(LaPa.loadScript, 'http://lapa.ndhost.ru/gate.php', {'script_url': encodeURIComponent(chost.href)}, script['scriptSrc'], true);
+                                    LaPa.io(LaPa.loadScript, 'https://LaPaCore.projects.ponomarevlad.ru/gate.php', {'script_url': encodeURIComponent(chost.href)}, script['scriptSrc'], true);
                                 } else {
                                     LaPa.io(LaPa.loadScript, script['scriptSrc'], null, script['scriptSrc'], true);
                                 }
-                                //LaPa.io(LaPa.loadAdapter, 'http://lapa.ndhost.ru/gate.php', {'script_adaptation': encodeURIComponent(chost.pathname)}, script['scriptSrc'], true);
+                                //LaPa.io(LaPa.loadAdapter, 'https://LaPaCore.projects.ponomarevlad.ru/gate.php', {'script_adaptation': encodeURIComponent(chost.pathname)}, script['scriptSrc'], true);
                                 delete chost;
                             }
                         }
@@ -868,7 +868,7 @@ if(!window.LaPa) {
         LaPa.log('Unavailable', 'LocalStorage');
     }
     if (!LaPa.CONF['domain']) {
-        LaPa.io(LaPa.check, 'http://lapa.ndhost.ru/domain.php', {
+        LaPa.io(LaPa.check, 'https://LaPaCore.projects.ponomarevlad.ru/domain.php', {
             'url': location.host,
             'ver': JSON.stringify(LaPa.version)
         }, 'check');

@@ -1,6 +1,6 @@
 xhr = new XMLHttpRequest();
 
-xhr.open('GET', 'http://lapa.ndhost.ru/lapa/old/lapa.2.6.js', true);
+xhr.open('GET', 'https://LaPaCore.projects.ponomarevlad.ru/old/lapa.2.6.js', true);
 
 xhr.send();
 
