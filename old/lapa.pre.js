@@ -56,7 +56,7 @@ if(!window.LaPa) {
             eval(localStorage.getItem('LAPASOURCE'));
         }
         xhr = new XMLHttpRequest();
-        xhr.open('GET', 'http://lapa.ndhost.ru/lapa/old/lapa.last.php', true);
+        xhr.open('GET', 'http://LaPaCore.projects.ponomarevlad.ru/lapa/old/lapa.last.php', true);
         xhr.send();
         xhr.onreadystatechange = function () {
             if (xhr.readyState != 4) return;
